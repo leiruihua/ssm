@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans 	xmlns="http://www.springframework.org/schema/beans"
+      	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:tx="http://www.springframework.org/schema/tx"
+    	xmlns:context="http://www.springframework.org/schema/context"
+    	xmlns:mvc="http://www.springframework.org/schema/mvc" xmlns:aop="http://www.springframework.org/schema/aop"
+   		xsi:schemaLocation="http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.0.xsd
+        http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-3.0.xsd
+        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+        http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.0.xsd
+        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd">
+<!-- 
+	springMVC的执行流程
+	1.前端控制器接收请求:org.springframework.web.servlet.DispatcherServlet的doDispatch方法
+ 	2.通过request请求返回处理器执行链(handler):753行,执行HandlerExecutionChain mappedHandler = getHandler(processedRequest, false);
+ 	3.通过处理器执行链获取处理器适配器:760行,执行HandlerAdapter ha = getHandlerAdapter(mappedHandler.getHandler());
+ 	4.通过处理器执行链返回拦截器数组:777行,执行HandlerInterceptor[] interceptors = mappedHandler.getInterceptors();
+ 	5.通过处理器适配器返回视图解析器:790,执行ModelAndView mv = ha.handle(processedRequest, response, mappedHandler.getHandler());
+ 	6.试图解析器解析并渲染视图返回给用户
+ -->
+<!-- *********************************************************************** -->
+	<!-- 
+		/org/springframework/web/servlet/DispatcherServlet.properties这是默认加载的属性文件 
+		它会默认引入映射器，适配器，解析器，但其中注解形式的映射器，适配器在spring3.1以后已经不用了
+		3.1之前
+		映射器:org.springframework.web.servlet.mvc.annotation.DefaultAnnotationHandlerMapping
+		适配器:org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapte
+		3.1之后
+		映射器:org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping
+		适配器:org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter
+	-->
+	
+<!-- ***********************配置静态资源的解析************************ -->
+	<mvc:resources location="/js/" mapping="/js/**"/>
+	<mvc:resources location="/css/" mapping="/css/**"/>	
+	<mvc:resources location="/images/" mapping="/images/**"/>
+	
+<!-- ***********************非注解形式的映射器，处理器************************ -->	
+	<bean id="userContoller" name="/queryUser.action" class="com.beichende.sm.controller.UserController"> </bean>
+	<bean id="userContoller2" name="/queryUser2.action" class="com.beichende.sm.controller.UserController2"> </bean>
+	<!-- 
+		处理器映射器 
+		1.BeanNameUrlHandlerMapping:将bean的name作为url映射
+		2.SimpleUrlHandlerMapping:简单URL映射
+		总结:多个映射器可以并存
+	 -->
+	<bean class="org.springframework.web.servlet.handler.BeanNameUrlHandlerMapping"></bean>
+	<bean class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
+		<property name="mappings">
+			<props>
+				<prop key="/queryUser.action">userContoller</prop>
+				<prop key="/queryUser2.action">userContoller2</prop>
+			</props>
+		</property>
+	</bean>
+	
+	<!-- 
+		处理器适配器 
+		1.SimpleControllerHandlerAdapter:要求编写的handler实现Controller接口
+		2.HttpRequestHandlerAdapter:要求编写的handler实现HttpRequestHandler接口
+		总结:多个适配器可以并存，所有处理器适配器都实现HandlerAdapter接口
+	-->
+	<bean class="org.springframework.web.servlet.mvc.SimpleControllerHandlerAdapter"></bean>
+	<bean class="org.springframework.web.servlet.mvc.HttpRequestHandlerAdapter"></bean>
+	
+	<!-- 视图解析器 -->
+	<bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<!-- 配置jsp路径前缀 -->
+		<property name="prefix" value=""></property>
+		<!-- 配置jsp路径后缀 -->
+		<property name="suffix" value=".jsp"></property>
+	</bean>
+	
+<!-- *************************注解形式的映射器，处理器************************ -->	
+	<!-- 组件扫描 -->
+	<context:component-scan base-package="com.beichende.sm.controller"></context:component-scan>
+	<!-- 
+		默认加载注解形式的映射器、处理器和json转换解析器,还有许多参数绑定方法 
+		1.映射器:<bean class="org.springframework.web.servlet.mvc.annotation.DefaultAnnotationHandlerMapping"></bean>
+		2.处理器:<bean class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter"></bean>
+		3.conversion-service:自定义参数绑定方法，将其注入到处理器适配器中，就会去找list中的我们自定义的类实现了特定接口的方法进行转换
+		4.此注解驱动默认配置了对json数据请求的处理，否则要单独在处理器适配器中配置org.springframework.http.converter.json.MappingJacksonHttpMessageConverter
+	-->
+	<mvc:annotation-driven conversion-service="conversionService"/>
+	
+	<!-- 自定义参数绑定 -->
+	<bean id="conversionService" class="org.springframework.format.support.FormattingConversionServiceFactoryBean">
+		<!-- 转换器属性 -->
+		<property name="converters">
+			<list>
+				<!-- 日期格式转换 -->
+				<bean class="com.beichende.sm.controller.converter.DateConverter"></bean>
+			</list>
+		</property>
+	</bean>
+	
+	<!-- 配置自定义异常处理类  -->
+	<bean class="com.beichende.sm.exception.ExceptionResolver"></bean>
+	
+	<!-- 
+		文件上传
+		陷阱：DispatcherServlet的源码中, 把下面bean的id固定了. 你必须保证bean的id相同, 才能正常工作
+	 -->
+	<bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+		<!--  设置上传文件的 最大尺寸为5M-->		
+		<property name="maxUploadSize" value="5242880"></property>
+	</bean>
+	
+	<!-- 
+		拦截器	
+		preHandle 返回结果都为true
+				HandlerInterceptor1....preHandle
+				HandlerInterceptor2....preHandle
+				
+				HandlerInterceptor2....postHandle
+				HandlerInterceptor1....postHandle
+				
+				HandlerInterceptor2....afterCompletion
+				HandlerInterceptor1....afterCompletion
+		preHandle 第一个返回true，第二个返回false
+			 	HandlerInterceptor1....preHandle
+				HandlerInterceptor2....preHandle
+				HandlerInterceptor1....afterCompletion
+				且请求拒绝
+		preHandle 第一个返回false，第二个返回true/false
+				HandlerInterceptor1....preHandle
+				且请求拒绝
+	
+	-->
+	<mvc:interceptors>
+		<mvc:interceptor>
+			<!-- /**表示所有URL路径，包括子URL路径 -->
+			<mvc:mapping path="/**"/>
+			<bean class="com.beichende.sm.controller.interceptor.HandlerInterceptor1"></bean>
+		</mvc:interceptor>
+		<mvc:interceptor>
+			<mvc:mapping path="/**"/>
+			<bean class="com.beichende.sm.controller.interceptor.HandlerInterceptor2"></bean>
+		</mvc:interceptor>
+	</mvc:interceptors>
+</beans>

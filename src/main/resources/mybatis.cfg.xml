@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration  PUBLIC "-//mybatis.org//DTD Config 3.0//EN"  "http://mybatis.org/dtd/mybatis-3-config.dtd">
+
+<configuration>
+
+	<!-- 全局配置参数 -->
+	<settings>
+		<!-- 延迟加载:默认false(关闭)，改为true(打开) -->
+		<setting name="lazyLoadingEnabled" value="true" />
+		<!-- 积极加载:默认true(默认全部加载懒属性或对象)，改为false(消极加载，即按需加载，当调用属性或对象的get方法时才加载) -->
+		<setting name="aggressiveLazyLoading" value="false" />
+		<!-- 二级缓存:默认true(开启),改为false(关闭)， 1.二级缓存打开之后，一个mapper标签就拥有一个二级缓存(前提:namespace不同,如果相同就是同一个) 
+			2.单个mapper标签范围内的所有sqlsession共享该二级缓存，不同mapper标签内二级缓存不互通 -->
+		<setting name="cacheEnabled" value="true" />
+	</settings>
+
+	<!-- 为参数类型定义别名 -->
+	<typeAliases>
+		<!-- 批量定义别名:会自动扫描包下的所有类并自动定义别名，别名就是类名(首字母大小写都可以) -->
+		<package name="com.beichende.sm.pojo" />
+	</typeAliases>
+</configuration>  

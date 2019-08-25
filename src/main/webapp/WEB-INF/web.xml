@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns="http://java.sun.com/xml/ns/j2ee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	version="2.4"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee    
+								http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
+	<display-name>Archetype Created Web Application</display-name>
+
+	<!-- 执行顺序 Listener ==> Filter ==> Servlet -->
+	
+	<!-- Spring 监听 -->
+	<listener>
+		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+	</listener>
+	<context-param>
+		<param-name>contextConfigLocation</param-name>
+		<param-value>classpath:applicationContext.xml</param-value>
+	</context-param>
+
+	<!-- 
+		对于post请求的中文乱码 
+		<init-param>
+			encoding:utf-8(设置请求发出的编码格式为UTF-8) 
+			forceEncoding:true(请求响应的编码也用UTF-8)
+	-->
+	<filter>
+		<filter-name>CharacterEncodingFilter</filter-name>
+		<filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>
+		<init-param>
+			<param-name>encoding</param-name>
+			<param-value>utf-8</param-value>
+		</init-param>
+		<init-param>
+			<param-name>forceEncoding</param-name>
+			<param-value>true</param-value>
+		</init-param>
+	</filter>
+	<!-- 拦截所有的请求 -->
+	<filter-mapping>
+		<filter-name>CharacterEncodingFilter</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+	<!-- 
+		对于GET请求的中文乱码 
+		找到tomcat的server.xml文件，增加 URIEncoding="UTF-8"，如下
+		<Connector URIEncoding="UTF-8" connectionTimeout="20000" port="8080" protocol="HTTP/1.1" redirectPort="8443"/>
+	-->
+	
+
+	<!-- 
+		springMVC前端控制器 
+		<init-param>
+			1.配置contextConfigLocation的目的是为了加载自定义配置文件，可以在文件中配置处理器映射器、适配器 
+			2.如果不配置contextConfigLocation,默认加载"servlet名称"-servlet.xml(springMVC-servlet.xml) 
+		<servlet-mapping>
+			1.服务器启动时就会初始化servlet，然后会根据url-pattern设定的规则拦截用户发来的请求 
+			2.以/*结尾 => path.endsWith("/*"),对应的Servlet会被丢到wildcardWrappers中 
+			3.以*.开头 => path.startsWith("*."),会被丢到extensionWrappers中 
+			4.是否是/ => path.equals("/")，会被丢到defaultWrapper中 
+			注:建议使用/，而不是/*,如果使用/*,那么请求时可以通过DispatcherServlet转发到相应的Action或者 Controller中的，但是返回的jsp还会再次被拦截，这样导致404错误，即访问不到jsp
+	-->
+	<servlet>
+		<servlet-name>springMVC</servlet-name>
+		<servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+		<init-param>
+			<param-name>contextConfigLocation</param-name>
+			<param-value>classpath:springMVC.xml</param-value>
+		</init-param>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>springMVC</servlet-name>
+		<url-pattern>/</url-pattern>
+	</servlet-mapping>
+
+	
+</web-app>
