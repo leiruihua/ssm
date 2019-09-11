@@ -9,6 +9,8 @@ package com.beichende.sm.service.impl;
 
 import java.util.List;
 
+import javax.annotation.Resource;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -26,7 +28,7 @@ import com.beichende.sm.service.IUserService;
 @Service
 public class UserServiceImpl implements IUserService {
 	
-	@Autowired
+	@Resource
 	private IUserMapper iUserMapper;
 
 	
