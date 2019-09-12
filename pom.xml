@@ -8,14 +8,8 @@
   <name>assess_ssm Maven Webapp</name>
   <url>http://maven.apache.org</url>
   <dependencies>
-  	<!-- 单元测试包 -->
-    <dependency>
-	    <groupId>junit</groupId>
-	    <artifactId>junit</artifactId>
-	    <version>3.8.1</version>
-	    <scope>test</scope>
-    </dependency>
-    
+<!-- https://mvnrepository.com/artifact/org.springframework.cloud/spring-cloud-context -->	
+  
     <!-- oracle驱动包 -->
 	<dependency>
 	  	<groupId>com.oracle.driver</groupId>
