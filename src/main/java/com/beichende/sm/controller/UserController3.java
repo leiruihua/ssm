@@ -13,9 +13,7 @@ import java.util.List;
 import java.util.UUID;
 
 
-
-
-
+import javax.annotation.Resource;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,7 +51,7 @@ import com.beichende.sm.service.IUserService;
 @RequestMapping("/user")
 public class UserController3{
 	
-	@Autowired
+	@Resource
 	private IUserService iUserService;
 	
 	/**根据条件查询用户
