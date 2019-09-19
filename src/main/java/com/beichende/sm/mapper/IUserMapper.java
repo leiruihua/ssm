@@ -8,6 +8,8 @@
 package com.beichende.sm.mapper;
 import java.util.List;
 
+import org.springframework.stereotype.Component;
+
 import com.beichende.sm.pojo.MUser;
 import com.beichende.sm.pojo.MUserVo;
 /**
@@ -16,17 +18,18 @@ import com.beichende.sm.pojo.MUserVo;
  * @see
  * @since
  */
+@Component
 public interface IUserMapper {
 	//通过动态Sql去查询
-	public List<MUser> findUser(MUser user) throws Exception;
+	List<MUser> findUser(MUser user) throws Exception;
 	//通过userNo查询用户
-	public MUser findUserByUserNo(int userNo) throws Exception;
+	MUser findUserByUserNo(int userNo) throws Exception;
 	//修改
-	public void updateUser(MUser user) throws Exception;
+	void updateUser(MUser user) throws Exception;
 	//批量删除
-	public void deleteUserByManyUserNo(MUserVo muserVo) throws Exception;
+	void deleteUserByManyUserNo(MUserVo muserVo) throws Exception;
 	//增加
-	public void insertUser(MUser user) throws Exception;
+	void insertUser(MUser user) throws Exception;
 	//批量增加
-	public void insertManyUser(MUserVo muserVo) throws Exception;
+	void insertManyUser(MUserVo muserVo) throws Exception;
 }
