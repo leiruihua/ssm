@@ -2,6 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.beichende.sm.mapper.IUserMapper">
+
 	<sql id="queryMuser">
 		<if test="userAge != null and userAge != ''">
 			and u.userAge = #{userAge}
@@ -28,6 +29,8 @@
 		</where>
 		order by userNo
 	</select>
+
+
 
 	<select id="findUserByUserNo" parameterType="com.beichende.sm.pojo.MUserVo"
 		resultType="com.beichende.sm.pojo.MUser">

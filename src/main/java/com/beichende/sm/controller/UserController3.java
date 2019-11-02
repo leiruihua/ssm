@@ -56,15 +56,15 @@ import com.beichende.sm.service.IUserService;
  */
 
 @Controller
-//窄化请求映射，比如执行queryUser3()方法,前台请求就是${path}/user/queryUser3
-@RequestMapping("/user")
+@RequestMapping("/user")//窄化请求映射，比如执行queryUser3()方法,前台请求就是${path}/user/queryUser3
 public class UserController3{
 	
 	@Resource
 	private IUserService iUserService;
 	
-	/**根据条件查询用户
-	 * */
+	/**
+	 * 根据条件查询用户
+	 */
 	@RequestMapping("/queryUser3")
 	public String queryUser3(Model model,MUser muser) throws Exception{//返回字符串的形式
 		List<MUser> list = iUserService.findUser(muser);
@@ -77,11 +77,12 @@ public class UserController3{
 		return "/index";//返回类型为String的方式
 	}
 	
-	/**根据序号查询用户
+	/**
+	 * 根据序号查询用户
 	 * @RequestMapping
-	 * value:指定action请求为/queryUser4
-	 * method:限制http的请求只支持post和get请求
-	 * */
+	 * 	value:指定action请求为/queryUser4
+	 * 	method:限制http的请求只支持post和get请求
+	 */
 	@RequestMapping(value="/queryUser4",method={RequestMethod.POST,RequestMethod.GET })
 	public String queryUser4(Model model,MUserVo muserVo) throws Exception{
 		List<MUser> list = iUserService.findUser(null);
@@ -92,15 +93,16 @@ public class UserController3{
 		return "/index";
 	}
 	
-	/**修改用户
+	/**
+	 * 修改用户
 	 * @ModelAttribute
-	 * value:设定此参数放入request域中的key(名称),可以在前台取其值
+	 * 	value:设定此参数放入request域中的key(名称),可以在前台取其值
 	 * 		  注:springmvc会默认把前台传过来的pojo数据(不支持简单类型)放入request域中，key等于pojo类型(首字母小写)
 	 * @RequestParam
-	 * value:指定前台参数名为id，默认为userNo
-	 * required:表示是否必传，默认为true必传
-	 * defaultValue:表示默认值
-	 * */
+	 * 	value:指定前台参数的命名为 nowDate
+	 * 	required:表示是否必传，默认为true必传
+	 * 	defaultValue:表示默认值
+	 */
 	@RequestMapping("/updateUser")
 	public String updateUser(Model model,
 			@ModelAttribute(value="user")MUser user,
@@ -113,8 +115,9 @@ public class UserController3{
 		return "/index";
 	}
 	
-	/**删除用户
-	 * */
+	/**
+	 * 删除用户
+	 */
 	@RequestMapping("/deleteUserByManyUserNo")
 	public String deleteUserByManyUserNo(Model model,MUserVo muserVo) throws Exception{
 		iUserService.deleteUserByManyUserNo(muserVo);
@@ -124,8 +127,9 @@ public class UserController3{
 		return "/index";
 	}
 	
-	/**增加单个用户
-	 * */
+	/**
+	 * 增加单个用户
+	 */
 	@RequestMapping("/insertUser")
 	public String insertUser(Model model,MUser user) throws Exception{
 		iUserService.insertUser(user);
@@ -135,8 +139,9 @@ public class UserController3{
 		return "/index";
 	}
 	
-	/**增加多个用户
-	 * */
+	/**
+	 * 增加多个用户
+	 */
 	@RequestMapping("/insertManyUser")
 	public String insertManyUser(Model model,MUserVo muserVo) throws Exception{
 		iUserService.insertManyUser(muserVo);
@@ -146,9 +151,10 @@ public class UserController3{
 		System.out.println("insertManyUser");
 		return "/index";
 	}
-	/**文件上传
+	/**
+	 * 文件上传
 	 * 1.MultipartFile是个接口，必须加@RequestParam，不然绑定请求参数的时候会把这个当作类去初始化，会抛异常
-	 * */
+	 */
 	@RequestMapping("/fileUpload")
 	public String fileUpload(Model model,@RequestParam("file")MultipartFile file) throws Exception{
 
@@ -234,19 +240,21 @@ public class UserController3{
 		return "/index";
 	}
 	
-	/**Json数据交互
+	/**
+	 * Json数据交互
 	 * 1.通过@RequestBody将json串解析成java对象，
 	 * 2.通过@ResponseBody将java对象解析成json串
-	 * */
+	 */
 	@RequestMapping("/requestJson")
 	public @ResponseBody MUser requestJson(@RequestBody MUser user){
 		System.out.println("requestJson");
 		return user;
 	}
-	/** Json数据交互
+	/**
+	 * Json数据交互
 	 * 1.通过key-value的形式直接解析成java对象
 	 * 2.通过@ResponseBody将java对象解析成json串
-	 * */
+	 */
 	@RequestMapping("/requestKeyValue")
 	public @ResponseBody MUser requestKeyValue(MUser user){
 		System.out.println("requestKeyValue");
@@ -255,7 +263,7 @@ public class UserController3{
 	
 	/**
 	 * restful的支持
-	 * */
+	 */
 	@RequestMapping("/restful/{id}")
 	public String  restful(Model model,@PathVariable("id") Integer userNo) throws Exception{
 		List<MUser> list = iUserService.findUser(null);
@@ -266,7 +274,7 @@ public class UserController3{
 	
 	/**
 	 * 	登陆
-	 * */
+	 */
 	@RequestMapping("/login")
 	public String login(HttpSession session,String userName,String password){
 		session.setAttribute("userName", userName);
