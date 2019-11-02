@@ -8,6 +8,7 @@
 package com.beichende.sm.controller;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -18,6 +19,13 @@ import java.util.UUID;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpSession;
 
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.streaming.SXSSFWorkbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
@@ -143,10 +151,12 @@ public class UserController3{
 	 * */
 	@RequestMapping("/fileUpload")
 	public String fileUpload(Model model,@RequestParam("file")MultipartFile file) throws Exception{
-		
+
 		if(file != null){
 			//获取上传图片的原始文件名称(例如:xx.jpg)
 			String fileName = file.getOriginalFilename();
+			// 获取文件的名称后缀
+			String suffix = fileName.substring(fileName.lastIndexOf(".") + 1);
 			if(fileName.length() > 0){
 				//存储新图片的物理路径
 				String filePath = "E:"+File.separator+"apache-tomcat-7.0.32-windows-x64"+File.separator+"image"+File.separator;
@@ -161,6 +171,64 @@ public class UserController3{
 				System.out.println("fileUpload");
 			}
 		}
+		List<MUser> list = iUserService.findUser(null);
+		model.addAttribute("list",list);
+		return "/index";
+	}
+
+	// 导入文件
+	@RequestMapping("/importFile")
+	public String importFile(Model model,@RequestParam("file")MultipartFile file) throws Exception{
+		MUserVo mUserVo = new MUserVo();
+		//获取上传图片的原始文件名称(例如:xx.jpg)
+		String fileName = file.getOriginalFilename();
+		// 获取文件的名称后缀
+		String suffix = fileName.substring(fileName.lastIndexOf(".") + 1);
+		// 工作簿
+		Workbook workbook = null;
+		if ("xls".equals(suffix.toUpperCase())) {// 2003及以前的excle
+			// 数据超过65536会内存溢出
+			workbook = new HSSFWorkbook(file.getInputStream());
+
+		}else if ("xlsx".equals(suffix.toLowerCase())) {//2007及以后的excel
+			// 数据超过65536行会内存溢出
+			// workbook = new XSSFWorkbook(file.getInputStream());
+
+			// 数据超过65536行不会内存溢出，会将超出的数据写到硬盘
+			workbook = new SXSSFWorkbook(new XSSFWorkbook(file.getInputStream()));
+		}
+		// 获取工作簿中的 sheet 总数
+		int sheetNum = workbook.getNumberOfSheets();
+		// 遍历 sheet
+		for (int i = 0; i < sheetNum; i++) {
+			// 获取 单个 sheet对象
+			Sheet sheet = workbook.getSheetAt(i);
+			// 获取总行数
+			int rowNum = sheet.getLastRowNum();
+			// 获取第一行
+			Row firstRow =  sheet.getRow(0);
+			// 获取总列数
+			int columnNum = firstRow.getLastCellNum();
+			// 从第二行开始遍历
+			for (int j = 1; j < rowNum; j++) {
+				Row row =  sheet.getRow(j);
+				List<String> list = new ArrayList<String>();
+				// 遍历每一列
+				for (int k = 0; k < columnNum; k++) {
+					Cell cell = row.getCell(k);
+					list.add(cell.getStringCellValue().trim());
+				}
+				MUser muser = new MUser();
+				muser.setUserName(list.get(0));
+				muser.setUserSex(Integer.parseInt(list.get(1)));
+				muser.setUserAge(Integer.parseInt(list.get(2)));
+				muser.setUserPhone(list.get(3));
+				muser.setUserQQ(list.get(4));
+				mUserVo.getMuserList().add(muser);
+			}
+
+		}
+		iUserService.insertManyUser(mUserVo);
 		List<MUser> list = iUserService.findUser(null);
 		model.addAttribute("list",list);
 		return "/index";
