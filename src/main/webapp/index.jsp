@@ -87,8 +87,7 @@
 				<c:forEach items="${list }" var="list">
 					<tr>
 						<td>
-							<input type="checkbox" name="userNoArray"
-							value="${list.userNo }">
+							<input type="checkbox" name="userNoArray" value="${list.userNo }">
 						</td>
 						<td>${list.userNo }</td>
 						<td>${list.userName }</td>
@@ -121,10 +120,9 @@
 	<!-- ********************************************************************** -->
 	<div style="width: 50%; float: left">
 		<h3 align="center">修改用户</h3>
-		<form id="updateUser" action="${path }/user/updateUser.action"
-			method="post">
-			<input type="hidden" name="nowDate" value="2018-9-9 9:9:9"> <input
-				type="hidden" name="userNo" value="${user.userNo }">
+		<form id="updateUser" action="${path }/user/updateUser.action" method="post">
+			<input type="hidden" name="nowDate" value="2018-9-9 9:9:9">
+			<input type="hidden" name="userNo" value="${user.userNo }">
 			<table align="center">
 				<tr>
 					<td>姓&nbsp;&nbsp;名:</td>

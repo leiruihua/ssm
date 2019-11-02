@@ -38,13 +38,17 @@
 		<property name="configLocation" value="classpath:mybatis.cfg.xml"></property>
 	</bean>
 
-	<!-- 批量扫描mapper接口 ,从指定包中扫描出所有mapper接口，根据在spring中注入的mapper接口自动创建代理对象 1.规范:mapper.java类型和mapper.xml映射文件名称保持一致 
-		2.自动扫描出来的mapper的bean的id为mapper的类名(首字母小写) -->
+	<!--
+	批量扫描mapper接口 ,从指定包中扫描出所有mapper接口，根据在spring中注入的mapper接口自动创建代理对象
+		1.规范:mapper.java类型和mapper.xml映射文件名称保持一致
+		2.自动扫描出来的mapper的bean的id为mapper的类名(首字母小写)
+	-->
 	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
 		<!-- 如果扫描多个包，每个包中间用半角逗号分割 -->
 		<property name="basePackage" value="com.beichende.sm.mapper"></property>
 		<!-- 注:这里使用value="sqlSessionFactory"的形式而不是用ref="sqlSessionFactory",因为一旦使 
-			用ref的形式，先扫描mapper接口，注入sqlSessionFactory，再去加载jdbc.properties文件， dataSource的属性值没有被替换，这样就会出现注入sqlSessionFactory失败的现象 -->
+			用ref的形式，先扫描mapper接口，注入sqlSessionFactory，再去加载jdbc.properties文件，
+			dataSource的属性值没有被替换，这样就会出现注入sqlSessionFactory失败的现象 -->
 		<property name="sqlSessionFactoryBeanName" value="sqlSessionFactory"></property>
 	</bean>
 
@@ -54,13 +58,17 @@
 		<property name="dataSource" ref="dataSource" />
 	</bean>
 
-	<!-- XML:事务管理 为事务管理器类指定匹配器，通过用name指定的匹配字符串进行对对应的方法进行打开和关闭事务 1.REQUIRED:如果当前已经存在事务，那么加入该事务，如果不存在事务，创建一个事务，这是默认值。 
+	<!--
+	XML:事务管理 为事务管理器类指定匹配器，通过用name指定的匹配字符串进行对对应的方法进行打开和关闭事务 1.REQUIRED:如果当前已经存在事务，那么加入该事务，如果不存在事务，创建一个事务，这是默认值。
 		SUPPORTS:如果当前已经存在事务，那么加入该事务，如果不存在事务，创建一个所谓的空事务（可以认为无事务执行） MANDATORY:当前必须存在一个事务，否则抛出异常。 
 		REQUIRES_NEW:暂停当前事务(当前无事务则不需要)，创建一个新事务。 两个事务没有依赖关系，可以实现新事务回滚，但外部事务继续执行。 NEVER:如果当前存在事务，则抛出异常，否则在无事务环境上执行代码。 
 		NESTED:如果当前存在事务，则使用 SavePoint 技术把当前事务状态进行保存，然后底层共用一个连接， 当NESTED内部出错的时候，自行回滚到 
 		SavePoint这个状态，只要外部捕获到了异常，就可以继续 进行外部的事务提交，而不会受到内嵌业务的干扰，但是，如果外部事务抛出了异常，整个大事务都会回滚。 
-		注意： spring配置事务管理器要主动指定 nestedTransactionAllowed=true 2.read-only:为true表示调用某个方法时，只获取用来查数据的连接，对数据库的是数据进行修改是无效的，目的是为了提高性能 
-		3.默认发生runtimeExcwption(运行时异常)会进行事务回滚，当然也可自定义异常回滚 -->
+	注意：
+		1.spring配置事务管理器要主动指定 nestedTransactionAllowed=true
+		2.read-only:为true表示调用某个方法时，只获取用来查数据的连接，对数据库的是数据进行修改是无效的，目的是为了提高性能
+		3.默认发生runtimeExcwption(运行时异常)会进行事务回滚，当然也可自定义异常回滚
+	-->
 	<tx:advice id="txAdvice" transaction-manager="transactionManager">
 		<tx:attributes>
 			<tx:method name="save*" propagation="REQUIRED" />
@@ -80,8 +88,7 @@
 	<!-- XML：AOP切面 aop:poincut：定义切入面的作用范围 -->
 	<aop:config>
 		<!-- 指定切面的范围 -->
-		<aop:pointcut id="servicePointcut"
-			expression="execution(* com.beichende.sm.service.impl.*.*(..))" />
+		<aop:pointcut id="servicePointcut" expression="execution(* com.beichende.sm.service.impl.*.*(..))" />
 		<!-- 事务管理 -->
 		<aop:advisor advice-ref="txAdvice" pointcut-ref="servicePointcut" />
 	</aop:config>

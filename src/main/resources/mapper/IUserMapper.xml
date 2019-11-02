@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.beichende.sm.mapper.IUserMapper">
+
+	<sql id="queryMuser">
+		<if test="userAge != null and userAge != ''">
+			and u.userAge = #{userAge}
+		</if>
+		<if test="userName != null and userName != ''">
+			and u.userName like '%${userName}%'
+		</if>
+		<if test="userPhone != null and userPhone != ''">
+			and u.userPhone = #{userPhone}
+		</if>
+		<if test="userQQ != null and userQQ != ''">
+			and u.userQQ = #{userQQ}
+		</if>
+		<if test="userSex != null and userSex != ''">
+			and u.userSex = #{userSex}
+		</if>
+	</sql>
+
+	<select id="findUser" parameterType="com.beichende.sm.pojo.MUser"
+		resultType="com.beichende.sm.pojo.MUser">
+		select * from yolanda_userDto u
+		<where>
+			<include refid="queryMuser"></include>
+		</where>
+		order by userNo
+	</select>
+
+
+
+	<select id="findUserByUserNo" parameterType="com.beichende.sm.pojo.MUserVo"
+		resultType="com.beichende.sm.pojo.MUser">
+		select * from yolanda_userDto where userNo =
+		#{muser.userNo}
+	</select>
+
+	<update id="updateUser" parameterType="com.beichende.sm.pojo.MUser">
+		update
+		yolanda_userDto
+		set
+		userAge=#{userAge},
+		userName=#{userName},
+		userPhone=#{userPhone},
+		userQQ=#{userQQ},
+		userSex=#{userSex}
+		where
+		userNo=#{userNo}
+	</update>
+
+	<delete id="deleteUserByUserNo" parameterType="java.lang.Integer">
+		delete from
+		yolanda_userDto where userNo = #{userNo}
+	</delete>
+
+	<delete id="deleteUserByManyUserNo" parameterType="com.beichende.sm.pojo.MUser">
+		delete from yolanda_userDto where userNo = 0
+		<if test="userNoArray != '' and userNoArray != null">
+			<foreach collection="userNoArray" item="userNo" open="or userNo in("
+				close=")" separator=",">
+				#{userNo}
+			</foreach>
+		</if>
+
+	</delete>
+
+	<insert id="insertUser" parameterType="com.beichende.sm.pojo.MUser">
+		insert into
+		yolanda_userDto(
+		userNo,
+		userAge,
+		userName,
+		userPhone,
+		userQQ,userSex
+		)
+		values
+		(
+		seq_yolanda_userDto.nextval,
+		#{userAge},
+		#{userName},
+		#{userPhone},
+		#{userQQ},
+		#{userSex}
+		)
+	</insert>
+
+	<!-- 批量使用序列增加 -->
+	<insert id="insertManyUser" parameterType="com.beichende.sm.pojo.MUserVo">
+		insert into
+		yolanda_userDto(
+		userNo,
+		userAge,
+		userName,
+		userPhone,
+		userQQ,
+		userSex
+		)
+		select seq_yolanda_userDto.nextval,y.* from (
+		<foreach collection="muserList" item="test" index="index"
+			separator="union all">
+			select
+			#{test.userAge,jdbcType=NUMERIC},
+			#{test.userName,jdbcType=VARCHAR},
+			#{test.userPhone,jdbcType=VARCHAR},
+			#{test.userQQ,jdbcType=VARCHAR},
+			#{test.userSex,jdbcType=NUMERIC}
+			from dual
+		</foreach>
+		)y
+	</insert>
+
+	<!-- 批量不使用序列增加 -->
+	<insert id="insertDetailed" parameterType="java.util.List"
+		useGeneratedKeys="false">
+		insert all
+		<foreach collection="muserList" item="item" index="index">
+			into yolanda_userDto
+			(
+			userAge,
+			userName,
+			userPhone,
+			userQQ,
+			userSex
+			)
+			values
+			(
+			#{item.userAge,jdbcType=NUMERIC},
+			#{item.userName,jdbcType=VARCHAR},
+			#{item.userPhone,jdbcType=VARCHAR},
+			#{item.userQQ,jdbcType=VARCHAR},
+			#{item.userSex,jdbcType=NUMERIC},
+			)
+		</foreach>
+		select 1 from dual
+	</insert>
+</mapper>

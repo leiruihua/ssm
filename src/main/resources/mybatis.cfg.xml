@@ -19,4 +19,8 @@
 		<!-- 批量定义别名:会自动扫描包下的所有类并自动定义别名，别名就是类名(首字母大小写都可以) -->
 		<package name="com.beichende.sm.pojo" />
 	</typeAliases>
+
+	<mappers>
+		<mapper resource="mapper/IUserMapper.xml"></mapper>
+	</mappers>
 </configuration>  

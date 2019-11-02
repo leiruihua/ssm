@@ -9,15 +9,14 @@ package com.beichende.sm.service.impl;
 
 import java.util.List;
 
-import javax.annotation.Resource;
-
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.beichende.sm.mapper.IUserMapper;
 import com.beichende.sm.pojo.MUser;
 import com.beichende.sm.pojo.MUserVo;
 import com.beichende.sm.service.IUserService;
+
+import javax.annotation.Resource;
 
 /**
  *<简述功能>
@@ -27,11 +26,11 @@ import com.beichende.sm.service.IUserService;
  */
 @Service
 public class UserServiceImpl implements IUserService {
-	
-	@Resource
+
+    @Resource
 	private IUserMapper iUserMapper;
 
-	
+
 	public List<MUser> findUser(MUser user) throws Exception{
 		List<MUser> list = iUserMapper.findUser(user);
 		return list;
