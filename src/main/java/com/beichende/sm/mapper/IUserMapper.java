@@ -18,7 +18,7 @@ import com.beichende.sm.pojo.MUserVo;
  * @see
  * @since
  */
-
+@Component
 public interface IUserMapper {
 	//通过动态Sql去查询
 	List<MUser> findUser(MUser user) throws Exception;

@@ -16,7 +16,7 @@
 			<artifactId>ojdbc6</artifactId>
 			<version>11.2.0.3.0</version>
 			<scope>system</scope>
-			<systemPath>${project.basedir}/src/main/lib/ojdbc6.jar</systemPath>
+			<systemPath>${project.basedir}/src/main/webapp/WEB-INF/lib/ojdbc6.jar</systemPath>
 		</dependency>
 
 		<!-- slf4j和log4i连接包 -->
@@ -187,5 +187,15 @@
 	</dependencies>
 	<build>
 		<finalName>ssm</finalName>
+        <plugins>
+            <!-- 将依赖范围为 system 的 jar 包也参与打包-->
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <includeSystemScope>true</includeSystemScope>
+                </configuration>
+            </plugin>
+        </plugins>
 	</build>
 </project>

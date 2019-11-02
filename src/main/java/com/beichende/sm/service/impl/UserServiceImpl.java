@@ -16,6 +16,8 @@ import com.beichende.sm.pojo.MUser;
 import com.beichende.sm.pojo.MUserVo;
 import com.beichende.sm.service.IUserService;
 
+import javax.annotation.Resource;
+
 /**
  *<简述功能>
  *<功能详细描述>
@@ -25,6 +27,7 @@ import com.beichende.sm.service.IUserService;
 @Service
 public class UserServiceImpl implements IUserService {
 
+    @Resource
 	private IUserMapper iUserMapper;
 
 

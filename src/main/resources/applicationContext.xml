@@ -38,7 +38,8 @@
 		<property name="configLocation" value="classpath:mybatis.cfg.xml"></property>
 	</bean>
 
-	<!-- 批量扫描mapper接口 ,从指定包中扫描出所有mapper接口，根据在spring中注入的mapper接口自动创建代理对象
+	<!--
+	批量扫描mapper接口 ,从指定包中扫描出所有mapper接口，根据在spring中注入的mapper接口自动创建代理对象
 		1.规范:mapper.java类型和mapper.xml映射文件名称保持一致
 		2.自动扫描出来的mapper的bean的id为mapper的类名(首字母小写)
 	-->
